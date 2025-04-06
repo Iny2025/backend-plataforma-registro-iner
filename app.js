@@ -8,12 +8,14 @@ const categoriaRoutes = require('./routes/categoriaRoutes');
 const cors = require('cors');
 
 
-app.use(cors());
+
 // Cargar las variables de entorno desde el archivo .env
 dotenv.config();
 
 // Inicializar la aplicación Express
 const app = express();
+
+app.use(cors());
 
 // Middleware para parsear JSON en las solicitudes
 app.use(express.json());
