@@ -5,7 +5,10 @@ const pool = require('./config/bd.config'); // Ajusta la ruta si es necesario
 const ubicacionRoutes = require('./routes/ubicacionRoutes');
 const inerRoutes = require('./routes/inerRoutes');
 const categoriaRoutes = require('./routes/categoriaRoutes');
+const cors = require('cors');
 
+
+app.use(cors());
 // Cargar las variables de entorno desde el archivo .env
 dotenv.config();
 
