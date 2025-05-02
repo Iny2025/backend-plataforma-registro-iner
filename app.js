@@ -1,12 +1,23 @@
 // Importar dependencias
 const express = require('express');
 const dotenv = require('dotenv');
-const pool = require('./config/bd.config'); // Ajusta la ruta si es necesario
+const cors = require('cors');
+const pool = require('./config/bd.confing'); //
 const ubicacionRoutes = require('./routes/ubicacionRoutes');
 const inerRoutes = require('./routes/inerRoutes');
 const categoriaRoutes = require('./routes/categoriaRoutes');
-const cors = require('cors');
-
+const usuarioRoutes = require('./routes/usuarioRoutes');
+const notificacionRoutes = require('./routes/notificacionRoutes');
+const valoracionUsuarioInerRoutes = require('./routes/valoracionUsuarioRoutes');
+const tarifaRoutes = require('./routes/tarifaRoutes');
+const servicioRoutes = require('./routes/servicioRoutes');
+const publicacionRoutes = require('./routes/publicacionRoutes');
+const bancoTipoCuentaRoutes = require('./routes/bancoTipoCuentaRoutes');
+const cuentaInerRoutes = require('./routes/cuentaInerRoutes');
+const estadoContratoRoutes = require('./routes/estadoContratoRoutes');
+const contratoRoutes = require('./routes/contratoRoutes');
+const valoracionServicioUsuarioRoutes = require('./routes/valoracionServicioRoutes');
+const confirmacionRoutes = require('./routes/comfrimacionPagoCobroRoutes');
 
 
 // Cargar las variables de entorno desde el archivo .env
@@ -24,6 +35,19 @@ app.use(express.json());
 app.use('/api/ubicacion', ubicacionRoutes);
 app.use('/api/iner', inerRoutes);
 app.use('/api', categoriaRoutes);
+app.use('/api/usuarios', usuarioRoutes);
+app.use('/api/notificaciones', notificacionRoutes);
+app.use('/api/valoraciones', valoracionUsuarioInerRoutes);
+app.use('/api/tarifas', tarifaRoutes);
+app.use('/api/servicios', servicioRoutes);
+app.use('/api/publicaciones', publicacionRoutes);
+app.use('/api/datostipocuenta', bancoTipoCuentaRoutes);
+app.use('/api/cuentas-iner', cuentaInerRoutes);
+app.use('/api/estado-contrato', estadoContratoRoutes);
+app.use('/api/contrato', contratoRoutes);
+app.use('/api/valoracion-servicio-usuario', valoracionServicioUsuarioRoutes);
+app.use('/api/confirmacion', confirmacionRoutes);
+
 
 // Exportar la aplicación configurada
 module.exports = app;

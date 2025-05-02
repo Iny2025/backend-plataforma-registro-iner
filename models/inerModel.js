@@ -1,15 +1,19 @@
-// Importar el pool de conexiones
-const pool = require('../config/bd.config'); // Ajusta la ruta según la ubicación de tu config.js
+const pool = require('../config/bd.confing');
+const bcrypt = require('bcrypt');
 
 // Modelo de INER
 const Iner = {
   /**
-   * Agrega un nuevo registro a la tabla INER.
+   * Agrega un nuevo registro a la tabla INER con la contraseña encriptada.
    * @param {Object} iner - Objeto con los datos del registro INER.
-   * @returns {Promise<Object>} - Retorna el registro agregado, incluyendo ID_INER y RUT_INER.
+   * @returns {Promise<Object>} - Retorna el registro agregado, incluyendo ID_INER generado.
    */
   addIner: async (iner) => {
     try {
+      // Encriptar la contraseña
+      const saltRounds = 10;
+      const hashedPassword = await bcrypt.hash(iner.pass_iner, saltRounds);
+
       const query = `
         INSERT INTO INER (
           RUT_INER,
@@ -30,18 +34,18 @@ const Iner = {
         iner.rut_iner,
         iner.nom_iner,
         iner.mail_iner,
-        iner.pass_iner,
+        hashedPassword, // Guardar la contraseña encriptada
         iner.id_pais,
         iner.id_region,
         iner.id_comuna,
-        iner.telefono_iner,
-        iner.valoracion_prom_iner,
-        iner.descr_perfil_iner,
-        iner.direccion_iner,
+        iner.telefono_iner || null,
+        iner.valoracion_prom_iner || null,
+        iner.descr_perfil_iner || null,
+        iner.direccion_iner || null
       ];
 
       const result = await pool.query(query, values);
-      return result.rows[0]; // Incluye ID_INER (generado por el trigger) y RUT_INER
+      return result.rows[0]; // Incluye ID_INER generado por el trigger
     } catch (error) {
       console.error('Error al agregar INER:', error);
       throw error;
@@ -51,7 +55,7 @@ const Iner = {
   /**
    * Obtiene un registro INER por su ID_INER.
    * @param {string} id - ID_INER del registro.
-   * @returns {Promise<Object|null>} - Retorna el registro si existe (con ID_INER y RUT_INER) o null si no.
+   * @returns {Promise<Object|null>} - Retorna el registro si existe o null si no.
    */
   findInerById: async (id) => {
     try {
@@ -62,7 +66,7 @@ const Iner = {
       const values = [id];
 
       const result = await pool.query(query, values);
-      return result.rows.length > 0 ? result.rows[0] : null; // Incluye ID_INER y RUT_INER
+      return result.rows.length > 0 ? result.rows[0] : null;
     } catch (error) {
       console.error('Error al buscar INER por ID:', error);
       throw error;
@@ -70,13 +74,20 @@ const Iner = {
   },
 
   /**
-   * Actualiza un registro INER por su ID_INER.
+   * Actualiza un registro INER por su ID_INER, encriptando la contraseña si se proporciona.
    * @param {string} id - ID_INER del registro.
    * @param {Object} iner - Datos del registro a actualizar.
-   * @returns {Promise<Object|null>} - Retorna el registro actualizado (con ID_INER y RUT_INER) o null si no existe.
+   * @returns {Promise<Object|null>} - Retorna el registro actualizado o null si no existe.
    */
   updateIner: async (id, iner) => {
     try {
+      let hashedPassword = iner.pass_iner;
+      if (iner.pass_iner) {
+        // Encriptar la nueva contraseña si se proporciona
+        const saltRounds = 10;
+        hashedPassword = await bcrypt.hash(iner.pass_iner, saltRounds);
+      }
+
       const query = `
         UPDATE INER
         SET
@@ -99,18 +110,18 @@ const Iner = {
         iner.rut_iner,
         iner.nom_iner,
         iner.mail_iner,
-        iner.pass_iner,
+        hashedPassword || null, // Usar la contraseña encriptada o null
         iner.id_pais,
         iner.id_region,
         iner.id_comuna,
-        iner.telefono_iner,
-        iner.valoracion_prom_iner,
-        iner.descr_perfil_iner,
-        iner.direccion_iner,
+        iner.telefono_iner || null,
+        iner.valoracion_prom_iner || null,
+        iner.descr_perfil_iner || null,
+        iner.direccion_iner || null
       ];
 
       const result = await pool.query(query, values);
-      return result.rows.length > 0 ? result.rows[0] : null; // Incluye ID_INER y RUT_INER
+      return result.rows.length > 0 ? result.rows[0] : null;
     } catch (error) {
       console.error('Error al actualizar INER:', error);
       throw error;
@@ -140,7 +151,7 @@ const Iner = {
 
   /**
    * Obtiene todos los registros INER.
-   * @returns {Promise<Array<Object>>} - Retorna una lista de todos los registros INER (con ID_INER y RUT_INER).
+   * @returns {Promise<Array<Object>>} - Retorna una lista de todos los registros INER.
    */
   getAllIner: async () => {
     try {
@@ -149,12 +160,41 @@ const Iner = {
         ORDER BY FECHA_CREACION_INER DESC;
       `;
       const result = await pool.query(query);
-      return result.rows; // Incluye ID_INER y RUT_INER en cada registro
+      return result.rows;
     } catch (error) {
       console.error('Error al obtener todos los INER:', error);
       throw error;
     }
   },
+
+  /**
+   * Busca un INER por su correo y verifica la contraseña.
+   * @param {string} mail_iner - Correo del INER.
+   * @param {string} pass_iner - Contraseña en texto plano.
+   * @returns {Promise<Object|null>} - Retorna el INER si la contraseña es válida, null si no.
+   */
+  findByMailAndPassword: async (mail_iner, pass_iner) => {
+    try {
+      const query = `
+        SELECT * FROM INER
+        WHERE MAIL_INER = $1;
+      `;
+      const values = [mail_iner];
+
+      const result = await pool.query(query, values);
+      if (result.rows.length === 0) {
+        return null;
+      }
+
+      const iner = result.rows[0];
+      // Comparar la contraseña proporcionada con el hash almacenado
+      const isMatch = await bcrypt.compare(pass_iner, iner.pass_iner);
+      return isMatch ? iner : null;
+    } catch (error) {
+      console.error('Error al buscar INER por correo y contraseña:', error);
+      throw error;
+    }
+  }
 };
 
 module.exports = Iner;

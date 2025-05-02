@@ -1,16 +1,18 @@
 // Importar dependencias
 const express = require('express');
 const inerController = require('../controllers/inerController');
+const verifyToken = require('../middleware/auth');
 
 // Crear un router de Express
 const router = express.Router();
 
 // Definir las rutas
-router.post('/', inerController.createIner);              // Crear un nuevo INER
-router.get('/:id', inerController.getInerById);           // Obtener un INER por ID
-router.put('/:id', inerController.updateIner);            // Actualizar un INER por ID
-router.delete('/:id', inerController.deleteIner);         // Eliminar un INER por ID
-router.get('/', inerController.getAllIner);               // Obtener todos los INER
+router.post('/register', inerController.registerIner); // POST /api/iners/register (pública)
+router.post('/login', inerController.loginIner); // POST /api/iners/login (pública)
+router.get('/', verifyToken, inerController.getAllIner); // GET /api/iners (protegida)
+router.get('/:id', verifyToken, inerController.getInerById); // GET /api/iners/:id (protegida)
+router.put('/:id', verifyToken, inerController.updateIner); // PUT /api/iners/:id (protegida)
+router.delete('/:id', verifyToken, inerController.deleteIner); // DELETE /api/iners/:id (protegida)
 
 // Exportar el router
 module.exports = router;

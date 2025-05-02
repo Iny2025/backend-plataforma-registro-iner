@@ -1,13 +1,14 @@
-// Importar el modelo Iner
-const Iner = require('../models/inerModel'); // Ajusté el nombre a 'iner' para que coincida con lo que hemos usado
+const Iner = require('../models/inerModel');
+const jwt = require('jsonwebtoken');
 
+// Controlador de Iner
 const inerController = {
   /**
-   * Crea un nuevo registro INER.
+   * Registra un nuevo INER.
    * @param {Object} req - Objeto de solicitud HTTP.
    * @param {Object} res - Objeto de respuesta HTTP.
    */
-  createIner: async (req, res) => {
+  registerIner: async (req, res) => {
     try {
       const {
         rut_iner,
@@ -20,38 +21,83 @@ const inerController = {
         telefono_iner,
         valoracion_prom_iner,
         descr_perfil_iner,
-        direccion_iner,
+        direccion_iner
       } = req.body;
 
       // Validar campos requeridos
       if (!rut_iner || !nom_iner || !mail_iner || !pass_iner || !id_pais || !id_region || !id_comuna) {
-        return res.status(400).json({ message: 'Faltan campos requeridos: rut_iner, nom_iner, mail_iner, pass_iner, id_pais, id_region o id_comuna' });
+        return res.status(400).json({
+          message: 'Faltan campos requeridos: rut_iner, nom_iner, mail_iner, pass_iner, id_pais, id_region o id_comuna'
+        });
+      }
+
+      // Validar formato de la contraseña
+      if (pass_iner.length < 8) {
+        return res.status(400).json({ message: 'La contraseña debe tener al menos 8 caracteres' });
       }
 
       const newIner = {
         rut_iner,
         nom_iner,
         mail_iner,
-        pass_iner,
+        pass_iner, // La contraseña será encriptada en el modelo
         id_pais,
         id_region,
         id_comuna,
-        telefono_iner: telefono_iner || null, // Campos opcionales pueden ser null
-        valoracion_prom_iner: valoracion_prom_iner || null,
-        descr_perfil_iner: descr_perfil_iner || null,
-        direccion_iner: direccion_iner || null,
+        telefono_iner,
+        valoracion_prom_iner,
+        descr_perfil_iner,
+        direccion_iner
       };
 
       const result = await Iner.addIner(newIner);
       res.status(201).json(result);
     } catch (error) {
-      console.error('Error en createIner:', error);
-      res.status(500).json({ message: 'Error al crear el registro INER', error: error.message });
+      console.error('Error en registerIner:', error);
+      res.status(500).json({
+        message: 'Error al registrar el INER',
+        error: error.message
+      });
     }
   },
 
   /**
-   * Obtiene un registro INER por su ID.
+   * Autentica un INER por correo y contraseña, devolviendo un token JWT.
+   * @param {Object} req - Objeto de solicitud HTTP.
+   * @param {Object} res - Objeto de respuesta HTTP.
+   */
+  loginIner: async (req, res) => {
+    try {
+      const { mail_iner, pass_iner } = req.body;
+
+      if (!mail_iner || !pass_iner) {
+        return res.status(400).json({ message: 'Correo y contraseña son requeridos' });
+      }
+
+      const iner = await Iner.findByMailAndPassword(mail_iner, pass_iner);
+      if (!iner) {
+        return res.status(401).json({ message: 'Credenciales inválidas' });
+      }
+
+      // Generar token JWT
+      const token = jwt.sign(
+        { id_iner: iner.id_iner, mail_iner: iner.mail_iner },
+        process.env.JWT_SECRET,
+        { expiresIn: '1h' } // El token expira en 1 hora
+      );
+
+      res.status(200).json({ message: 'Autenticación exitosa', token, iner });
+    } catch (error) {
+      console.error('Error en loginIner:', error);
+      res.status(500).json({
+        message: 'Error al autenticar el INER',
+        error: error.message
+      });
+    }
+  },
+
+  /**
+   * Obtiene un INER por su ID.
    * @param {Object} req - Objeto de solicitud HTTP.
    * @param {Object} res - Objeto de respuesta HTTP.
    */
@@ -65,17 +111,20 @@ const inerController = {
 
       const iner = await Iner.findInerById(id);
       if (!iner) {
-        return res.status(404).json({ message: 'Registro INER no encontrado' });
+        return res.status(404).json({ message: 'INER no encontrado' });
       }
       res.status(200).json(iner);
     } catch (error) {
       console.error('Error en getInerById:', error);
-      res.status(500).json({ message: 'Error al obtener el registro INER', error: error.message });
+      res.status(500).json({
+        message: 'Error al obtener el INER',
+        error: error.message
+      });
     }
   },
 
   /**
-   * Actualiza un registro INER por su ID.
+   * Actualiza un INER por su ID.
    * @param {Object} req - Objeto de solicitud HTTP.
    * @param {Object} res - Objeto de respuesta HTTP.
    */
@@ -93,7 +142,7 @@ const inerController = {
         telefono_iner,
         valoracion_prom_iner,
         descr_perfil_iner,
-        direccion_iner,
+        direccion_iner
       } = req.body;
 
       if (!id) {
@@ -101,37 +150,47 @@ const inerController = {
       }
 
       // Validar campos requeridos
-      if (!rut_iner || !nom_iner || !mail_iner || !pass_iner || !id_pais || !id_region || !id_comuna) {
-        return res.status(400).json({ message: 'Faltan campos requeridos: rut_iner, nom_iner, mail_iner, pass_iner, id_pais, id_region o id_comuna' });
+      if (!rut_iner || !nom_iner || !mail_iner || !id_pais || !id_region || !id_comuna) {
+        return res.status(400).json({
+          message: 'Faltan campos requeridos: rut_iner, nom_iner, mail_iner, id_pais, id_region o id_comuna'
+        });
+      }
+
+      // Validar formato de la contraseña si se proporciona
+      if (pass_iner && pass_iner.length < 8) {
+        return res.status(400).json({ message: 'La contraseña debe tener al menos 8 caracteres' });
       }
 
       const updatedIner = {
         rut_iner,
         nom_iner,
         mail_iner,
-        pass_iner,
+        pass_iner: pass_iner || null,
         id_pais,
         id_region,
         id_comuna,
-        telefono_iner: telefono_iner || null,
-        valoracion_prom_iner: valoracion_prom_iner || null,
-        descr_perfil_iner: descr_perfil_iner || null,
-        direccion_iner: direccion_iner || null,
+        telefono_iner,
+        valoracion_prom_iner,
+        descr_perfil_iner,
+        direccion_iner
       };
 
       const result = await Iner.updateIner(id, updatedIner);
       if (!result) {
-        return res.status(404).json({ message: 'Registro INER no encontrado' });
+        return res.status(404).json({ message: 'INER no encontrado' });
       }
       res.status(200).json(result);
     } catch (error) {
       console.error('Error en updateIner:', error);
-      res.status(500).json({ message: 'Error al actualizar el registro INER', error: error.message });
+      res.status(500).json({
+        message: 'Error al actualizar el INER',
+        error: error.message
+      });
     }
   },
 
   /**
-   * Elimina un registro INER por su ID.
+   * Elimina un INER por su ID.
    * @param {Object} req - Objeto de solicitud HTTP.
    * @param {Object} res - Objeto de respuesta HTTP.
    */
@@ -145,34 +204,38 @@ const inerController = {
 
       const deleted = await Iner.deleteIner(id);
       if (!deleted) {
-        return res.status(404).json({ message: 'Registro INER no encontrado' });
+        return res.status(404).json({ message: 'INER no encontrado' });
       }
-      res.status(200).json({ message: 'Registro INER eliminado con éxito' });
+      res.status(200).json({ message: 'INER eliminado con éxito' });
     } catch (error) {
       console.error('Error en deleteIner:', error);
-      res.status(500).json({ message: 'Error al eliminar el registro INER', error: error.message });
+      res.status(500).json({
+        message: 'Error al eliminar el INER',
+        error: error.message
+      });
     }
   },
 
   /**
-   * Obtiene todos los registros INER.
+   * Obtiene todos los INER.
    * @param {Object} req - Objeto de solicitud HTTP.
-   * @param
-
- {Object} res - Objeto de respuesta HTTP.
+   * @param {Object} res - Objeto de respuesta HTTP.
    */
   getAllIner: async (req, res) => {
     try {
       const iners = await Iner.getAllIner();
       if (iners.length === 0) {
-        return res.status(404).json({ message: 'No se encontraron registros INER' });
+        return res.status(404).json({ message: 'No se encontraron INER' });
       }
       res.status(200).json(iners);
     } catch (error) {
       console.error('Error en getAllIner:', error);
-      res.status(500).json({ message: 'Error al obtener los registros INER', error: error.message });
+      res.status(500).json({
+        message: 'Error al obtener los INER',
+        error: error.message
+      });
     }
-  },
+  }
 };
 
 module.exports = inerController;

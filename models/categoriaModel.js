@@ -1,5 +1,5 @@
 // Importar el pool de conexiones
-const pool = require('../config/bd.config'); // Ajusta la ruta según la ubicación de tu config.js
+const pool = require('../config/bd.confing'); // Ajusta la ruta según la ubicación de tu config.js
 
 // Modelo de Categoria
 const Categoria = {
