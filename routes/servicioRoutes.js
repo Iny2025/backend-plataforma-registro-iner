@@ -10,6 +10,7 @@ router.post('/', servicioController.createServicio);                   // Crear 
 router.get('/iner/:idIner', servicioController.getServiciosByInerId); // Obtener todos los servicios por ID_INER
 router.patch('/:id/estado', servicioController.updateEstadoPublicacion); // Actualizar el estado_publicacion por ID_SERVICIO
 router.put('/:id', servicioController.updateServicio);                 // Editar un servicio por ID_SERVICIO
-
+router.get('/:id', servicioController.getServicioById);
+router.delete('/eliminar/:id', servicioController.deleteServicio);   //  Obtener un servicio por ID_SERVICIO
 // Exportar el router
 module.exports = router;

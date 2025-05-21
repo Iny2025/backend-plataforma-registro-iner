@@ -158,7 +158,64 @@ const servicioController = {
         error: error.message 
       });
     }
+  },
+
+    /**
+   * Obtiene un servicio por su ID_SERVICIO.
+   * @param {Object} req - Objeto de solicitud HTTP.
+   * @param {Object} res - Objeto de respuesta HTTP.
+   */
+    getServicioById: async (req, res) => {
+      try {
+        const { id } = req.params;
+  
+        if (!id) {
+          return res.status(400).json({ message: 'El ID del servicio es requerido' });
+        }
+  
+        const servicio = await Servicio.getServicioById(id);
+        if (!servicio) {
+          return res.status(404).json({ message: 'Servicio no encontrado' });
+        }
+  
+        res.status(200).json(servicio);
+      } catch (error) {
+        console.error('Error en getServicioById:', error);
+        res.status(500).json({ 
+          message: 'Error al obtener el servicio', 
+          error: error.message 
+        });
+      }
+    },
+    /**
+ * Elimina un servicio por su ID_SERVICIO.
+ * @param {Object} req - Objeto de solicitud HTTP.
+ * @param {Object} res - Objeto de respuesta HTTP.
+ */
+deleteServicio: async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!id) {
+      return res.status(400).json({ message: 'El ID del servicio es requerido' });
+    }
+
+    const deleted = await Servicio.deleteServicio(id);
+    if (!deleted) {
+      return res.status(404).json({ message: 'Servicio no encontrado' });
+    }
+
+    res.status(200).json({ message: 'Servicio eliminado correctamente', servicio: deleted });
+  } catch (error) {
+    console.error('Error en deleteServicio:', error);
+    res.status(500).json({
+      message: 'Error al eliminar el servicio',
+      error: error.message
+    });
   }
+}
+
+  
 };
 
 module.exports = servicioController;

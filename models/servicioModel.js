@@ -131,7 +131,50 @@ const Servicio = {
       console.error('Error al actualizar servicio:', error);
       throw error;
     }
+  },
+  /**
+ * Obtiene un servicio por su ID_SERVICIO.
+ * @param {string} id - ID_SERVICIO del servicio.
+ * @returns {Promise<Object|null>} - Retorna el servicio encontrado o null si no existe.
+ */
+getServicioById: async (id) => {
+  try {
+    const query = `
+      SELECT * FROM SERVICIO
+      WHERE ID_SERVICIO = $1;
+    `;
+    const values = [id];
+
+    const result = await pool.query(query, values);
+    return result.rows.length > 0 ? result.rows[0] : null;
+  } catch (error) {
+    console.error('Error al obtener servicio por ID:', error);
+    throw error;
   }
+},
+/**
+ * Elimina un servicio por su ID_SERVICIO.
+ * @param {string} id - ID_SERVICIO del servicio a eliminar.
+ * @returns {Promise<Object|null>} - Retorna el registro eliminado o null si no existe.
+ */
+deleteServicio: async (id) => {
+  try {
+    const query = `
+      DELETE FROM SERVICIO
+      WHERE ID_SERVICIO = $1
+      RETURNING *;
+    `;
+    const values = [id];
+
+    const result = await pool.query(query, values);
+    return result.rows.length > 0 ? result.rows[0] : null;
+  } catch (error) {
+    console.error('Error al eliminar servicio:', error);
+    throw error;
+  }
+}
+
+
 };
 
 module.exports = Servicio;

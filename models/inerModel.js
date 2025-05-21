@@ -1,5 +1,5 @@
 const pool = require('../config/bd.confing');
-const bcrypt = require('bcryptjs');
+const bcrypt = require('bcrypt');
 
 // Modelo de INER
 const Iner = {
