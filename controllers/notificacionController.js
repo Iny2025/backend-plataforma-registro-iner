@@ -118,6 +118,57 @@ const notificacionController = {
         error: error.message 
       });
     }
+  },
+  /**
+   * Elimina una notificación de usuario por su ID.
+   * @param {Object} req - Objeto de solicitud HTTP.
+   * @param {Object} res - Objeto de respuesta HTTP.
+   */
+  deleteNotificacionUsuario: async (req, res) => {
+    try {
+      const { id } = req.params;
+
+      // Validar que el ID esté presente
+      if (!id) {
+        return res.status(400).json({ message: 'El ID de la notificación es requerido' });
+      }
+
+      // Llamar al modelo para eliminar la notificación
+      await Notificacion.deleteNotificacionUsuario(id);
+      res.status(200).json({ message: `Notificación con ID ${id} eliminada correctamente` });
+    } catch (error) {
+      console.error('Error en deleteNotificacionUsuario:', error);
+      res.status(500).json({ 
+        message: 'Error al eliminar la notificación para el usuario', 
+        error: error.message 
+      });
+    }
+  },
+
+  /**
+   * Elimina una notificación de INER por su ID.
+   * @param {Object} req - Objeto de solicitud HTTP.
+   * @param {Object} res - Objeto de respuesta HTTP.
+   */
+  deleteNotificacionIner: async (req, res) => {
+    try {
+      const { id } = req.params;
+
+      // Validar que el ID esté presente
+      if (!id) {
+        return res.status(400).json({ message: 'El ID de la notificación es requerido' });
+      }
+
+      // Llamar al modelo para eliminar la notificación
+      await Notificacion.deleteNotificacionIner(id);
+      res.status(200).json({ message: `Notificación con ID ${id} eliminada correctamente` });
+    } catch (error) {
+      console.error('Error en deleteNotificacionIner:', error);
+      res.status(500).json({ 
+        message: 'Error al eliminar la notificación para el INER', 
+        error: error.message 
+      });
+    }
   }
 };
 

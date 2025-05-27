@@ -99,7 +99,49 @@ const Notificacion = {
       console.error('Error al obtener notificaciones por ID_INER:', error);
       throw error;
     }
+  },
+  /**
+   * Elimina una notificación de la tabla NOTIFICACION_USUARIO.
+   * @param {string} idNotificacion - ID de la notificación a eliminar.
+   * @returns {Promise<void>} - Retorna un mensaje indicando el resultado de la operación.
+   */
+  deleteNotificacionUsuario: async (idNotificacion) => {
+    try {
+      const query = `
+        DELETE FROM NOTIFICACION_USUARIO
+        WHERE ID_NOTIFICACION_USUARIO = $1;
+      `;
+      const values = [idNotificacion];
+
+      await pool.query(query, values);
+      console.log(`Notificación con ID ${idNotificacion} eliminada`);
+    } catch (error) {
+      console.error('Error al eliminar notificación de usuario:', error);
+      throw error;
+    }
+  },
+  
+  /**
+   * Elimina una notificación de la tabla NOTIFICACION_INER.
+   * @param {string} idNotificacion - ID de la notificación a eliminar.
+   * @returns {Promise<void>} - Retorna un mensaje indicando el resultado de la operación.
+   */
+  deleteNotificacionIner: async (idNotificacion) => {
+    try {
+      const query = `
+        DELETE FROM NOTIFICACION_INER
+        WHERE ID_NOTIFICACION_INER = $1;
+      `;
+      const values = [idNotificacion];
+
+      await pool.query(query, values);
+      console.log(`Notificación con ID ${idNotificacion} eliminada`);
+    } catch (error) {
+      console.error('Error al eliminar notificación de INER:', error);
+      throw error;
+    }
   }
+
 };
 
 module.exports = Notificacion;
