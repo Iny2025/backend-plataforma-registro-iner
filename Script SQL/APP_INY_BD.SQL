@@ -788,3 +788,18 @@ INSERT INTO TIPO_CUENTA (DESCRIPCION_TIPO_CUENTA) VALUES
 INSERT INTO TARIFA (UNIDAD_TARIFA, PRECIO_UNIDAD_TARIFA, ID_INER)
 VALUES ('10 horas', 5000, 'INER_2b4d388b-416d-4227-b4af-26532c78d745')
 RETURNING ID_TARIFA;
+
+
+INSERT INTO NOTIFICACION_INER (ID_INER, DESCRIPCION_NOTI_INER)
+VALUES
+  ('INER_78296cca-ad84-4aa1-8a5a-b5bd58f81b75', 'titulo:Alerta,desc:Requiere atención inmediata del usuario,icon:fas fa-exclamation-triangle'),
+  ('INER_78296cca-ad84-4aa1-8a5a-b5bd58f81b75', 'titulo:Actualización,desc:Se han aplicado nuevos cambios al registro,icon:fas fa-sync-alt'),
+  ('INER_78296cca-ad84-4aa1-8a5a-b5bd58f81b75', 'titulo:Inicio Proceso,desc:El proceso ha comenzado exitosamente,icon:fas fa-play-circle'),
+  ('INER_78296cca-ad84-4aa1-8a5a-b5bd58f81b75', 'titulo:Finalización,desc:El proceso ha concluido correctamente,icon:fas fa-check-circle'),
+  ('INER_78296cca-ad84-4aa1-8a5a-b5bd58f81b75', 'titulo:Alerta,desc:Requiere atención inmediata del usuario,icon:fas fa-exclamation-triangle'),
+  ('INER_78296cca-ad84-4aa1-8a5a-b5bd58f81b75', 'titulo:Actualización,desc:Se han aplicado nuevos cambios al registro,icon:fas fa-sync-alt'),
+  ('INER_78296cca-ad84-4aa1-8a5a-b5bd58f81b75', 'titulo:Inicio Proceso,desc:El proceso ha comenzado exitosamente,icon:fas fa-play-circle'),
+  ('INER_78296cca-ad84-4aa1-8a5a-b5bd58f81b75', 'titulo:Finalización,desc:El proceso ha concluido correctamente,icon:fas fa-check-circle'),
+  ('INER_78296cca-ad84-4aa1-8a5a-b5bd58f81b75', 'titulo:Alerta,desc:Requiere atención inmediata del usuario,icon:fas fa-exclamation-triangle'),
+  ('INER_78296cca-ad84-4aa1-8a5a-b5bd58f81b75', 'titulo:Actualización,desc:Se han aplicado nuevos cambios al registro,icon:fas fa-sync-alt'),
+  ('INER_78296cca-ad84-4aa1-8a5a-b5bd58f81b75', 'titulo:Inicio Proceso,desc:El proceso ha comenzado exitosamente,icon:fas fa-play-circle');

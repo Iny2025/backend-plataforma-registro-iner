@@ -66,6 +66,75 @@ const ubicacionController = {
       res.status(500).json({ message: 'Error al obtener las comunas' });
     }
   },
+
+  /**
+   * Devuelve un país por su ID.
+   * @param {Object} req - Objeto de solicitud HTTP.
+   * @param {Object} res - Objeto de respuesta HTTP.
+   */
+  getPaisById: async (req, res) => {
+    try {
+      const { idPais } = req.params;
+      if (!idPais) {
+        return res.status(400).json({ message: 'El ID del país es requerido' });
+      }
+
+      const pais = await Ubicacion.getPaisById(idPais);
+      if (!pais) {
+        return res.status(404).json({ message: 'País no encontrado' });
+      }
+      res.status(200).json(pais);
+    } catch (error) {
+      console.error('Error en getPaisById:', error);
+      res.status(500).json({ message: 'Error al obtener el país' });
+    }
+  },
+
+  /**
+   * Devuelve una región por su ID.
+   * @param {Object} req - Objeto de solicitud HTTP.
+   * @param {Object} res - Objeto de respuesta HTTP.
+   */
+  getRegionById: async (req, res) => {
+    try {
+      const { idRegion } = req.params;
+      if (!idRegion) {
+        return res.status(400).json({ message: 'El ID de la región es requerido' });
+      }
+
+      const region = await Ubicacion.getRegionById(idRegion);
+      if (!region) {
+        return res.status(404).json({ message: 'Región no encontrada' });
+      }
+      res.status(200).json(region);
+    } catch (error) {
+      console.error('Error en getRegionById:', error);
+      res.status(500).json({ message: 'Error al obtener la región' });
+    }
+  },
+
+  /**
+   * Devuelve una comuna por su ID.
+   * @param {Object} req - Objeto de solicitud HTTP.
+   * @param {Object} res - Objeto de respuesta HTTP.
+   */
+  getComunaById: async (req, res) => {
+    try {
+      const { idComuna } = req.params;
+      if (!idComuna) {
+        return res.status(400).json({ message: 'El ID de la comuna es requerido' });
+      }
+
+      const comuna = await Ubicacion.getComunaById(idComuna);
+      if (!comuna) {
+        return res.status(404).json({ message: 'Comuna no encontrada' });
+      }
+      res.status(200).json(comuna);
+    } catch (error) {
+      console.error('Error en getComunaById:', error);
+      res.status(500).json({ message: 'Error al obtener la comuna' });
+    }
+  },
 };
 
 module.exports = ubicacionController;

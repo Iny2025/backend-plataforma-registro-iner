@@ -65,6 +65,66 @@ const Ubicacion = {
       throw error;
     }
   },
+
+    /**
+   * Obtiene un país por su ID.
+   * @param {number} idPais - ID del país.
+   * @returns {Promise<Object|null>} - Retorna el país o null si no existe.
+   */
+    getPaisById: async (idPais) => {
+      try {
+        const query = `
+          SELECT * FROM PAIS WHERE ID_PAIS = $1;
+        `;
+        const values = [idPais];
+        const result = await pool.query(query, values);
+        return result.rows[0] || null;
+      } catch (error) {
+        console.error('Error al obtener país por ID:', error);
+        throw error;
+      }
+    },
+  
+    /**
+     * Obtiene una región por su ID.
+     * @param {number} idRegion - ID de la región.
+     * @returns {Promise<Object|null>} - Retorna la región o null si no existe.
+     */
+    getRegionById: async (idRegion) => {
+      try {
+        const query = `
+          SELECT * FROM REGION WHERE ID_REGION = $1;
+        `;
+        const values = [idRegion];
+        const result = await pool.query(query, values);
+        return result.rows[0] || null;
+      } catch (error) {
+        console.error('Error al obtener región por ID:', error);
+        throw error;
+      }
+    },
+  
+    /**
+     * Obtiene una comuna por su ID.
+     * @param {number} idComuna - ID de la comuna.
+     * @returns {Promise<Object|null>} - Retorna la comuna o null si no existe.
+     */
+    getComunaById: async (idComuna) => {
+      try {
+        const query = `
+          SELECT * FROM COMUNA WHERE ID_COMUNA = $1;
+        `;
+        const values = [idComuna];
+        const result = await pool.query(query, values);
+        return result.rows[0] || null;
+      } catch (error) {
+        console.error('Error al obtener comuna por ID:', error);
+        throw error;
+      }
+    },
+
+
+
 };
 
 module.exports = Ubicacion;
