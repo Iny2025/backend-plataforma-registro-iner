@@ -1,5 +1,4 @@
 const express = require('express');
-const fetch = require('node-fetch'); // Si usas node 18+ puedes usar global fetch
 const router = express.Router();
 
 /**
