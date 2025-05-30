@@ -18,6 +18,7 @@ const estadoContratoRoutes = require('./routes/estadoContratoRoutes');
 const contratoRoutes = require('./routes/contratoRoutes');
 const valoracionServicioUsuarioRoutes = require('./routes/valoracionServicioRoutes');
 const confirmacionRoutes = require('./routes/comfrimacionPagoCobroRoutes');
+const geocodeRoutes = require('./routes/geocode');
 
 
 // Cargar las variables de entorno desde el archivo .env
@@ -47,6 +48,7 @@ app.use('/api/estado-contrato', estadoContratoRoutes);
 app.use('/api/contrato', contratoRoutes);
 app.use('/api/valoracion-servicio-usuario', valoracionServicioUsuarioRoutes);
 app.use('/api/confirmacion', confirmacionRoutes);
+app.use('/api', geocodeRoutes);
 
 
 // Exportar la aplicación configurada
