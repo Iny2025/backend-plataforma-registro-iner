@@ -169,7 +169,7 @@ const contratoController = {
   },
 
 
-   /**
+/**
  * Devuelve todos los contratos de un INER con datos relacionados.
  * @param {Object} req - Objeto de solicitud HTTP.
  * @param {Object} res - Objeto de respuesta HTTP.
@@ -193,6 +193,7 @@ getContratosByIner: async (req, res) => {
     res.status(500).json({ message: 'Error al obtener los contratos del INER' });
   }
 }
+
 
 };
 

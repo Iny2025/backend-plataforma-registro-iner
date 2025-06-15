@@ -192,7 +192,7 @@ const Contrato = {
   },
 
 
-  /**
+/**
  * Obtiene todos los contratos de un INER con información detallada de las tablas relacionadas.
  * @param {string} idIner - ID del INER (formato INER_(UUID)).
  * @returns {Promise<Array<Object>>} - Retorna una lista de contratos con datos relacionados.
@@ -213,12 +213,11 @@ getContratosByIner: async (idIner) => {
         s.DESCRIPCION_SERVICIO,
         t.UNIDAD_TARIFA,
         t.PRECIO_UNIDAD_TARIFA,
-        u.NOMBRE_USUARIO,
-        u.CORREO_USUARIO
+        i.TELEFONO_INER
       FROM CONTRATO c
       JOIN SERVICIO s ON c.ID_SERVICIO = s.ID_SERVICIO
       JOIN TARIFA t ON s.ID_TARIFA = t.ID_TARIFA
-      JOIN USUARIO u ON c.ID_USUARIO = u.ID_USUARIO
+      JOIN INER i ON c.ID_INER = i.ID_INER
       WHERE c.ID_INER = $1
       ORDER BY c.FECHA_CONTRATACION DESC;
     `;
@@ -231,6 +230,7 @@ getContratosByIner: async (idIner) => {
     throw error;
   }
 },
+
 
 };
 
