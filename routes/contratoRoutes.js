@@ -12,6 +12,7 @@ router.get('/contratos/:id', contratoController.getContratoById);
 router.put('/contratos/:id', contratoController.updateContrato);
 router.delete('/contratos/:id', contratoController.deleteContrato);
 router.put('/contratos/:id/estado', contratoController.updateEstadoContrato);
+router.get('/contratos/iner/:id_iner', contratoController.getContratosByIner);
 
 // Exportar el router
 module.exports = router;

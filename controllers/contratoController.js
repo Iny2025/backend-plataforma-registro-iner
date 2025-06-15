@@ -166,7 +166,34 @@ const contratoController = {
       console.error('Error en updateEstadoContrato:', error);
       res.status(500).json({ message: 'Error al actualizar el estado del contrato' });
     }
+  },
+
+
+   /**
+ * Devuelve todos los contratos de un INER con datos relacionados.
+ * @param {Object} req - Objeto de solicitud HTTP.
+ * @param {Object} res - Objeto de respuesta HTTP.
+ */
+getContratosByIner: async (req, res) => {
+  try {
+    const { id_iner } = req.params;
+
+    if (!id_iner) {
+      return res.status(400).json({ message: 'El ID del INER es requerido' });
+    }
+
+    const contratos = await Contrato.getContratosByIner(id_iner);
+    if (contratos.length === 0) {
+      return res.status(404).json({ message: 'No se encontraron contratos para este INER' });
+    }
+
+    res.status(200).json(contratos);
+  } catch (error) {
+    console.error('Error en getContratosByIner:', error);
+    res.status(500).json({ message: 'Error al obtener los contratos del INER' });
   }
+}
+
 };
 
 module.exports = contratoController;

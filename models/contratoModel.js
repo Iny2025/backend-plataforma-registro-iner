@@ -189,7 +189,49 @@ const Contrato = {
       console.error('Error al actualizar estado del contrato:', error);
       throw error;
     }
+  },
+
+
+  /**
+ * Obtiene todos los contratos de un INER con información detallada de las tablas relacionadas.
+ * @param {string} idIner - ID del INER (formato INER_(UUID)).
+ * @returns {Promise<Array<Object>>} - Retorna una lista de contratos con datos relacionados.
+ */
+getContratosByIner: async (idIner) => {
+  try {
+    const query = `
+      SELECT 
+        c.ID_CONTRATO,
+        c.ID_SERVICIO,
+        c.ID_INER,
+        c.ID_USUARIO,
+        c.ID_ESTADO_CONTRATO,
+        c.FECHA_CONTRATACION,
+        c.DESCUENTO_CONTRATO,
+        s.TITULO_SERVICIO,
+        s.SUBTITULO_SERVICIO,
+        s.DESCRIPCION_SERVICIO,
+        t.UNIDAD_TARIFA,
+        t.PRECIO_UNIDAD_TARIFA,
+        u.NOMBRE_USUARIO,
+        u.CORREO_USUARIO
+      FROM CONTRATO c
+      JOIN SERVICIO s ON c.ID_SERVICIO = s.ID_SERVICIO
+      JOIN TARIFA t ON s.ID_TARIFA = t.ID_TARIFA
+      JOIN USUARIO u ON c.ID_USUARIO = u.ID_USUARIO
+      WHERE c.ID_INER = $1
+      ORDER BY c.FECHA_CONTRATACION DESC;
+    `;
+    const values = [idIner];
+
+    const result = await pool.query(query, values);
+    return result.rows;
+  } catch (error) {
+    console.error('Error al obtener contratos por INER:', error);
+    throw error;
   }
+},
+
 };
 
 module.exports = Contrato;
