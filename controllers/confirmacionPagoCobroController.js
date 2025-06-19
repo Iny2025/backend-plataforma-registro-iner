@@ -104,6 +104,45 @@ const confirmacionController = {
       console.error('Error en updateConfirmacionCobro:', error);
       res.status(500).json({ message: 'Error al modificar la confirmación de cobro' });
     }
+  },
+   /**
+   * Obtiene todas las confirmaciones de pago para un usuario.
+   * Ruta sugerida: GET /confirmaciones/pago/:id_usuario
+   */
+   getConfirmacionesPagoByUsuario: async (req, res) => {
+    try {
+      const { id_usuario } = req.params;
+      if (!id_usuario) {
+        return res.status(400).json({ message: 'El campo id_usuario es requerido' });
+      }
+
+      const pagos = await Confirmacion.getConfirmacionesPagoByUsuario(id_usuario);
+      // Devuelve siempre un array, puede estar vacío si no hay registros
+      res.status(200).json(pagos);
+    } catch (error) {
+      console.error('Error en getConfirmacionesPagoByUsuario:', error);
+      res.status(500).json({ message: 'Error al obtener las confirmaciones de pago' });
+    }
+  },
+
+  /**
+   * Obtiene todas las confirmaciones de cobro para un INER.
+   * Ruta sugerida: GET /confirmaciones/cobro/:id_iner
+   */
+  getConfirmacionesCobroByIner: async (req, res) => {
+    try {
+      const { id_iner } = req.params;
+      if (!id_iner) {
+        return res.status(400).json({ message: 'El campo id_iner es requerido' });
+      }
+
+      const cobros = await Confirmacion.getConfirmacionesCobroByIner(id_iner);
+      // Devuelve siempre un array, puede estar vacío si no hay registros
+      res.status(200).json(cobros);
+    } catch (error) {
+      console.error('Error en getConfirmacionesCobroByIner:', error);
+      res.status(500).json({ message: 'Error al obtener las confirmaciones de cobro' });
+    }
   }
 };
 

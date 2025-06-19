@@ -113,7 +113,47 @@ const Confirmacion = {
       console.error('Error al modificar confirmación de cobro:', error);
       throw error;
     }
-  }
+  },
+
+    /**
+   * Obtiene todas las confirmaciones de pago para un usuario.
+   * @param {string} idUsuario - ID del usuario (USER_UUID).
+   * @returns {Promise<Array<Object>>} - Lista de confirmaciones de pago.
+   */
+    getConfirmacionesPagoByUsuario: async (idUsuario) => {
+      try {
+        const query = `
+          SELECT *
+          FROM CONFIRMACION_PAGO
+          WHERE ID_USUARIO = $1;
+        `;
+        const result = await pool.query(query, [idUsuario]);
+        return result.rows;
+      } catch (error) {
+        console.error('Error al obtener confirmaciones de pago por usuario:', error);
+        throw error;
+      }
+    },
+  
+    /**
+     * Obtiene todas las confirmaciones de cobro para un INER.
+     * @param {string} idIner - ID del INER (INER_UUID).
+     * @returns {Promise<Array<Object>>} - Lista de confirmaciones de cobro.
+     */
+    getConfirmacionesCobroByIner: async (idIner) => {
+      try {
+        const query = `
+          SELECT *
+          FROM CONFIRMACION_COBRO
+          WHERE ID_INER = $1;
+        `;
+        const result = await pool.query(query, [idIner]);
+        return result.rows;
+      } catch (error) {
+        console.error('Error al obtener confirmaciones de cobro por INER:', error);
+        throw error;
+      }
+    }
 };
 
 module.exports = Confirmacion;
