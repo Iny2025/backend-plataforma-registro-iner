@@ -18,6 +18,7 @@ const estadoContratoRoutes = require('./routes/estadoContratoRoutes');
 const contratoRoutes = require('./routes/contratoRoutes');
 const valoracionServicioUsuarioRoutes = require('./routes/valoracionServicioRoutes');
 const confirmacionRoutes = require('./routes/comfrimacionPagoCobroRoutes');
+const pagoRoutes = require('./routes/PagosRoutes');   
 const geocodeRoutes = require('./routes/geocode');
 
 
@@ -48,6 +49,7 @@ app.use('/api/estado-contrato', estadoContratoRoutes);
 app.use('/api/contrato', contratoRoutes);
 app.use('/api/valoracion-servicio-usuario', valoracionServicioUsuarioRoutes);
 app.use('/api/confirmacion', confirmacionRoutes);
+app.use('/api/pagos', pagoRoutes); 
 app.use('/api', geocodeRoutes);
 
 
