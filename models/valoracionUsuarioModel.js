@@ -1,5 +1,5 @@
 // Importar el pool de conexiones
-const pool = require('../config/bd.confing'); 
+const pool = require('../config/bd.confing');
 
 // Modelo de Valoración Usuario-Iner
 const ValoracionUsuarioIner = {
@@ -14,37 +14,40 @@ const ValoracionUsuarioIner = {
         INSERT INTO VALORACION_USUARIO_INER (
           ID_INER,
           ID_USUARIO,
+          ID_CONTRATO,
           VALORACION_USUARIO
-        ) VALUES ($1, $2, $3)
+        ) VALUES ($1, $2, $3, $4)
         RETURNING *;
       `;
       const values = [
         valoracion.id_iner,
         valoracion.id_usuario,
+        valoracion.id_contrato,
         valoracion.valoracion_usuario
       ];
 
       const result = await pool.query(query, values);
       return result.rows[0];
     } catch (error) {
-      console.error('Error al crear valoración:', error);
+      console.error('Error al cargar valoración:', error);
       throw error;
     }
   },
 
   /**
-   * Obtiene un registro por su clave primaria compuesta (ID_INER, ID_USUARIO).
-   * @param {string} idIner - ID_INER del registro.
-   * @param {string} idUsuario - ID_USUARIO del registro.
-   * @returns {Promise<Object|null>} - Retorna el registro si existe o null si no.
+   * Obtiene un registro por su clave primaria compuesta (ID_INER, ID_USUARIO, ID_CONTRATO).
+   * @param {string} idIner - ID_INER del registro
+   * @param {string} idUsuario - ID_USUARIO del registro
+   *   @param {number} idContrato - ID_CONTRATO del registro
+   * @returns {Promise<Object|null>} - Retorna el registro si existe o null si no
    */
-  findValoracionById: async (idIner, idUsuario) => {
+  findValoracionById: async (idIner, idUsuario, idContrato) => {
     try {
       const query = `
         SELECT * FROM VALORACION_USUARIO_INER
-        WHERE ID_INER = $1 AND ID_USUARIO = $2;
+        WHERE ID_INER = $1 AND ID_USUARIO = $2 AND ID_CONTRATO = $3;
       `;
-      const values = [idIner, idUsuario];
+      const values = [idIner, idUsuario, idContrato];
 
       const result = await pool.query(query, values);
       return result.rows.length > 0 ? result.rows[0] : null;
@@ -56,13 +59,13 @@ const ValoracionUsuarioIner = {
 
   /**
    * Obtiene todos los registros de la tabla VALORACION_USUARIO_INER.
-   * @returns {Promise<Array<Object>>} - Retorna una lista de todos los registros.
+   * @returns {Promise<Array<Object>>} - Retorna una lista de todos los registros
    */
   getAllValoraciones: async () => {
     try {
       const query = `
         SELECT * FROM VALORACION_USUARIO_INER
-        ORDER BY ID_INER, ID_USUARIO;
+        ORDER BY ID_INER, ID_USUARIO, ID_CONTRATO;
       `;
       const result = await pool.query(query);
       return result.rows;
@@ -73,21 +76,22 @@ const ValoracionUsuarioIner = {
   },
 
   /**
-   * Actualiza un registro por su clave primaria compuesta (ID_INER, ID_USUARIO).
-   * @param {string} idIner - ID_INER del registro.
-   * @param {string} idUsuario - ID_USUARIO del registro.
-   * @param {Object} valoracion - Datos de la valoración a actualizar.
-   * @returns {Promise<Object|null>} - Retorna el registro actualizado o null si no existe.
+   * Actualiza un registro por su clave primaria compuesta (ID_INER, ID_USUARIO, ID_CONTRATO).
+   * @param {string} idIner - ID_INER del registro
+   * @param {string} idUsuario - ID_USUARIO del registro
+   * @param {number} idContrato - ID_CONTRATO del registro
+   * @param {Object} valoracion - Datos de la valoración a actualizar
+   * @returns {Promise<Object|null>} - Retorna el registro actualizado o null si no existe
    */
-  updateValoracion: async (idIner, idUsuario, valoracion) => {
+  updateValoracion: async (idIner, idUsuario, idContrato, valoracion) => {
     try {
       const query = `
         UPDATE VALORACION_USUARIO_INER
-        SET VALORACION_USUARIO = $3
-        WHERE ID_INER = $1 AND ID_USUARIO = $2
+        SET VALORACION_USUARIO = $4
+        WHERE ID_INER = $1 AND ID_USUARIO = $2 AND ID_CONTRATO = $3
         RETURNING *;
       `;
-      const values = [idIner, idUsuario, valoracion.valoracion_usuario];
+      const values = [idIner, idUsuario, idContrato, valoracion.valoracion_usuario];
 
       const result = await pool.query(query, values);
       return result.rows.length > 0 ? result.rows[0] : null;
@@ -98,18 +102,19 @@ const ValoracionUsuarioIner = {
   },
 
   /**
-   * Elimina un registro por su clave primaria compuesta (ID_INER, ID_USUARIO).
-   * @param {string} idIner - ID_INER del registro.
-   * @param {string} idUsuario - ID_USUARIO del registro.
-   * @returns {Promise<boolean>} - Retorna true si se eliminó, false si no.
+   * Elimina un registro por su clave primaria compuesta (ID_INER, ID_USUARIO, ID_CONTRATO).
+   * @param {string} idIner - ID_INER del registro
+   * @param {string} idUsuario - ID_USUARIO del registro
+   * @param {number} idContrato - ID_CONTRATO del registro
+   * @returns {Promise<boolean>} - Retorna true si se eliminó, false si no
    */
-  deleteValoracion: async (idIner, idUsuario) => {
+  deleteValoracion: async (idIner, idUsuario, idContrato) => {
     try {
       const query = `
         DELETE FROM VALORACION_USUARIO_INER
-        WHERE ID_INER = $1 AND ID_USUARIO = $2;
+        WHERE ID_INER = $1 AND ID_USUARIO = $2 AND ID_CONTRATO = $3;
       `;
-      const values = [idIner, idUsuario];
+      const values = [idIner, idUsuario, idContrato];
 
       const result = await pool.query(query, values);
       return result.rowCount > 0;
@@ -120,9 +125,9 @@ const ValoracionUsuarioIner = {
   },
 
   /**
-   * Obtiene el promedio de las valoraciones para un usuario específico.
-   * @param {string} idUsuario - ID_USUARIO del usuario.
-   * @returns {Promise<number|null>} - Retorna el promedio de valoraciones o null si no hay registros.
+   * Obtiene el promedio de las valoraciones para un usuario específico
+   * @param {string} idUsuario - ID_USUARIO del usuario
+   * @returns {Promise<number|null>} - Retorna el promedio de valoraciones o null si no hay registros
    */
   getPromedioValoracionesByUsuarioId: async (idUsuario) => {
     try {
@@ -143,16 +148,16 @@ const ValoracionUsuarioIner = {
   },
 
   /**
-   * Obtiene todas las valoraciones para un usuario específico.
-   * @param {string} idUsuario - ID_USUARIO del usuario.
-   * @returns {Promise<Array<Object>>} - Retorna una lista de valoraciones del usuario.
+   * Obtiene todas las valoraciones para un usuario específico
+   * @param {string} idUsuario - ID_USUARIO del usuario
+   * @returns {Promise<Array<Object>>} - Retorna una lista de valoraciones del usuario
    */
   getValoracionesByUsuarioId: async (idUsuario) => {
     try {
       const query = `
         SELECT * FROM VALORACION_USUARIO_INER
         WHERE ID_USUARIO = $1
-        ORDER BY ID_INER;
+        ORDER BY ID_INER, ID_CONTRATO;
       `;
       const values = [idUsuario];
 

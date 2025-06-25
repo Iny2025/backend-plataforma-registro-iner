@@ -9,18 +9,19 @@ const valoracionUsuarioInerController = {
    */
   createValoracion: async (req, res) => {
     try {
-      const { id_iner, id_usuario, valoracion_usuario } = req.body;
+      const { id_iner, id_usuario, id_contrato, valoracion_usuario } = req.body;
 
       // Validar campos requeridos
-      if (!id_iner || !id_usuario || !valoracion_usuario) {
+      if (!id_iner || !id_usuario || !id_contrato || !valoracion_usuario) {
         return res.status(400).json({ 
-          message: 'Faltan campos requeridos: id_iner, id_usuario o valoracion_usuario' 
+          message: 'Faltan campos requeridos: id_iner, id_usuario, id_contrato o valoracion_usuario' 
         });
       }
 
       const newValoracion = {
         id_iner,
         id_usuario,
+        id_contrato,
         valoracion_usuario
       };
 
@@ -36,21 +37,21 @@ const valoracionUsuarioInerController = {
   },
 
   /**
-   * Obtiene una valoración por su clave primaria compuesta (ID_INER, ID_USUARIO).
+   * Obtiene una valoración por su clave primaria compuesta (ID_INER, ID_USUARIO, ID_CONTRATO).
    * @param {Object} req - Objeto de solicitud HTTP.
    * @param {Object} res - Objeto de respuesta HTTP.
    */
   getValoracionById: async (req, res) => {
     try {
-      const { idIner, idUsuario } = req.params;
+      const { idIner, idUsuario, idContrato } = req.params;
 
-      if (!idIner || !idUsuario) {
+      if (!idIner || !idUsuario || !idContrato) {
         return res.status(400).json({ 
-          message: 'Los IDs (idIner y idUsuario) son requeridos' 
+          message: 'Los IDs (idIner, idUsuario e idContrato) son requeridos' 
         });
       }
 
-      const valoracion = await ValoracionUsuarioIner.findValoracionById(idIner, idUsuario);
+      const valoracion = await ValoracionUsuarioIner.findValoracionById(idIner, idUsuario, idContrato);
       if (!valoracion) {
         return res.status(404).json({ message: 'Valoración no encontrada' });
       }
@@ -86,18 +87,18 @@ const valoracionUsuarioInerController = {
   },
 
   /**
-   * Actualiza una valoración por su clave primaria compuesta (ID_INER, ID_USUARIO).
+   * Actualiza una valoración por su clave primaria compuesta (ID_INER, ID_USUARIO, ID_CONTRATO).
    * @param {Object} req - Objeto de solicitud HTTP.
    * @param {Object} res - Objeto de respuesta HTTP.
    */
   updateValoracion: async (req, res) => {
     try {
-      const { idIner, idUsuario } = req.params;
+      const { idIner, idUsuario, idContrato } = req.params;
       const { valoracion_usuario } = req.body;
 
-      if (!idIner || !idUsuario) {
+      if (!idIner || !idUsuario || !idContrato) {
         return res.status(400).json({ 
-          message: 'Los IDs (idIner y idUsuario) son requeridos' 
+          message: 'Los IDs (idIner, idUsuario e idContrato) son requeridos' 
         });
       }
       if (!valoracion_usuario) {
@@ -107,7 +108,7 @@ const valoracionUsuarioInerController = {
       }
 
       const updatedValoracion = { valoracion_usuario };
-      const result = await ValoracionUsuarioIner.updateValoracion(idIner, idUsuario, updatedValoracion);
+      const result = await ValoracionUsuarioIner.updateValoracion(idIner, idUsuario, idContrato, updatedValoracion);
       if (!result) {
         return res.status(404).json({ message: 'Valoración no encontrada' });
       }
@@ -122,21 +123,21 @@ const valoracionUsuarioInerController = {
   },
 
   /**
-   * Elimina una valoración por su clave primaria compuesta (ID_INER, ID_USUARIO).
+   * Elimina una valoración por su clave primaria compuesta (ID_INER, ID_USUARIO, ID_CONTRATO).
    * @param {Object} req - Objeto de solicitud HTTP.
    * @param {Object} res - Objeto de respuesta HTTP.
    */
   deleteValoracion: async (req, res) => {
     try {
-      const { idIner, idUsuario } = req.params;
+      const { idIner, idUsuario, idContrato } = req.params;
 
-      if (!idIner || !idUsuario) {
+      if (!idIner || !idUsuario || !idContrato) {
         return res.status(400).json({ 
-          message: 'Los IDs (idIner y idUsuario) son requeridos' 
+          message: 'Los IDs (idIner, idUsuario e idContrato) son requeridos' 
         });
       }
 
-      const deleted = await ValoracionUsuarioIner.deleteValoracion(idIner, idUsuario);
+      const deleted = await ValoracionUsuarioIner.deleteValoracion(idIner, idUsuario, idContrato);
       if (!deleted) {
         return res.status(404).json({ message: 'Valoración no encontrada' });
       }
