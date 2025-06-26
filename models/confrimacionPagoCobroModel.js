@@ -153,7 +153,51 @@ const Confirmacion = {
         console.error('Error al obtener confirmaciones de cobro por INER:', error);
         throw error;
       }
-    }
+    },
+
+    /**
+ * Elimina un registro de la tabla CONFIRMACION_COBRO por su clave primaria compuesta.
+ * @param {number} idContrato - ID del contrato.
+ * @param {string} idIner - ID del INER.
+ * @returns {Promise<boolean>} - Retorna true si se eliminó, false si no.
+ */
+deleteConfirmacionCobro: async (idContrato, idIner) => {
+  try {
+    const query = `
+      DELETE FROM CONFIRMACION_COBRO
+      WHERE ID_CONTRATO = $1 AND ID_INER = $2;
+    `;
+    const values = [idContrato, idIner];
+
+    const result = await pool.query(query, values);
+    return result.rowCount > 0;
+  } catch (error) {
+    console.error('Error al eliminar confirmación de cobro:', error);
+    throw error;
+  }
+},
+
+/**
+ * Elimina un registro de la tabla CONFIRMACION_PAGO por su clave primaria compuesta.
+ * @param {number} idContrato - ID del contrato.
+ * @param {string} idUsuario - ID del usuario.
+ * @returns {Promise<boolean>} - Retorna true si se eliminó, false si no.
+ */
+deleteConfirmacionPago: async (idContrato, idUsuario) => {
+  try {
+    const query = `
+      DELETE FROM CONFIRMACION_PAGO
+      WHERE ID_CONTRATO = $1 AND ID_USUARIO = $2;
+    `;
+    const values = [idContrato, idUsuario];
+
+    const result = await pool.query(query, values);
+    return result.rowCount > 0;
+  } catch (error) {
+    console.error('Error al eliminar confirmación de pago:', error);
+    throw error;
+  }
+}
 };
 
 module.exports = Confirmacion;

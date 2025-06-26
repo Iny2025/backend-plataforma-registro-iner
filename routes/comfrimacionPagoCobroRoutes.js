@@ -12,6 +12,8 @@ router.post('/confirmacion-cobro', confirmacionController.createConfirmacionCobr
 router.post('/confirmacion-pago', confirmacionController.createConfirmacionPago);
 router.put('/confirmacion-pago', confirmacionController.setConfirmacionPagoTrue);
 router.put('/confirmacion-cobro/:id_contrato/:id_iner', confirmacionController.updateConfirmacionCobro);
+router.delete('/confirmacion-cobro/:idContrato/:idIner', confirmacionController.deleteConfirmacionCobro);
+router.delete('/confirmacion-pago/:idContrato/:idUsuario', confirmacionController.deleteConfirmacionPago);
 
 // Exportar el router
 module.exports = router;

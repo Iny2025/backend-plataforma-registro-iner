@@ -143,6 +143,66 @@ const confirmacionController = {
       console.error('Error en getConfirmacionesCobroByIner:', error);
       res.status(500).json({ message: 'Error al obtener las confirmaciones de cobro' });
     }
+  },
+
+  /**
+   * Elimina una confirmación de cobro por su clave primaria compuesta (ID_CONTRATO, ID_INER).
+   * @param {Object} req - Objeto de solicitud HTTP.
+   * @param {Object} res - Objeto de respuesta HTTP.
+   */
+  deleteConfirmacionCobro: async (req, res) => {
+    try {
+      const { idContrato, idIner } = req.params;
+
+      // Validar campos requeridos
+      if (!idContrato || !idIner) {
+        return res.status(400).json({ 
+          message: 'Los IDs (idContrato e idIner) son requeridos' 
+        });
+      }
+
+      const deleted = await Confirmacion.deleteConfirmacionCobro(idContrato, idIner);
+      if (!deleted) {
+        return res.status(404).json({ message: 'Confirmación de cobro no encontrada' });
+      }
+      res.status(200).json({ message: 'Confirmación de cobro eliminada con éxito' });
+    } catch (error) {
+      console.error('Error en deleteConfirmacionCobro:', error);
+      res.status(500).json({ 
+        message: 'Error al eliminar la confirmación de cobro', 
+        error: error.message 
+      });
+    }
+  },
+
+  /**
+   * Elimina una confirmación de pago por su clave primaria compuesta (ID_CONTRATO, ID_USUARIO).
+   * @param {Object} req - Objeto de solicitud HTTP.
+   * @param {Object} res - Objeto de respuesta HTTP.
+   */
+  deleteConfirmacionPago: async (req, res) => {
+    try {
+      const { idContrato, idUsuario } = req.params;
+
+      // Validar campos requeridos
+      if (!idContrato || !idUsuario) {
+        return res.status(400).json({ 
+          message: 'Los IDs (idContrato e idUsuario) son requeridos' 
+        });
+      }
+
+      const deleted = await Confirmacion.deleteConfirmacionPago(idContrato, idUsuario);
+      if (!deleted) {
+        return res.status(404).json({ message: 'Confirmación de pago no encontrada' });
+      }
+      res.status(200).json({ message: 'Confirmación de pago eliminada con éxito' });
+    } catch (error) {
+      console.error('Error en deleteConfirmacionPago:', error);
+      res.status(500).json({ 
+        message: 'Error al eliminar la confirmación de pago', 
+        error: error.message 
+      });
+    }
   }
 };
 
